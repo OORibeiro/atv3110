@@ -1,0 +1,128 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class SistemaClientes extends JFrame {
+    private Empresa empresa;
+    private JTextField nomeClienteField;
+    private JTextField emailField;
+    private JTextField nomeFuncionarioField;
+    private JTextField cargoField;
+    private JTextField salarioField;
+    private JTextArea areaClientes;
+    private JTextArea areaFuncionarios;
+
+    public SistemaClientes() {
+        empresa = new Empresa();
+
+        setTitle("Sistema de Clientes e Funcionários");
+        setSize(600, 500);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(new GridLayout(3, 1));
+
+        // Painel para Clientes
+        JPanel panelClientes = new JPanel();
+        panelClientes.setLayout(new GridLayout(3, 2));
+        panelClientes.add(new JLabel("Nome Cliente:"));
+        nomeClienteField = new JTextField();
+        panelClientes.add(nomeClienteField);
+
+        panelClientes.add(new JLabel("Email:"));
+        emailField = new JTextField();
+        panelClientes.add(emailField);
+
+        JButton adicionarClienteButton = new JButton("Adicionar Cliente");
+        adicionarClienteButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String nome = nomeClienteField.getText();
+                String email = emailField.getText();
+                if (empresa.adicionarCliente(nome, email)) {
+                    JOptionPane.showMessageDialog(null, "Cliente adicionado com sucesso!");
+                } else {
+                    JOptionPane.showMessageDialog(null, "Não é possível adicionar mais de 5 clientes.");
+                }
+                nomeClienteField.setText("");
+                emailField.setText("");
+                atualizarListaClientes();
+            }
+        });
+        panelClientes.add(adicionarClienteButton);
+
+        areaClientes = new JTextArea();
+        areaClientes.setEditable(false);
+        JScrollPane scrollPaneClientes = new JScrollPane(areaClientes);
+        panelClientes.add(scrollPaneClientes);
+
+        // Painel para Funcionários
+        JPanel panelFuncionarios = new JPanel();
+        panelFuncionarios.setLayout(new GridLayout(4, 2));
+        panelFuncionarios.add(new JLabel("Nome Funcionário:"));
+        nomeFuncionarioField = new JTextField();
+        panelFuncionarios.add(nomeFuncionarioField);
+
+        panelFuncionarios.add(new JLabel("Cargo:"));
+        cargoField = new JTextField();
+        panelFuncionarios.add(cargoField);
+
+        panelFuncionarios.add(new JLabel("Salário:"));
+        salarioField = new JTextField();
+        panelFuncionarios.add(salarioField);
+
+        JButton adicionarFuncionarioButton = new JButton("Adicionar Funcionário");
+        adicionarFuncionarioButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String nome = nomeFuncionarioField.getText();
+                String cargo = cargoField.getText();
+                double salario;
+                try {
+                    salario = Double.parseDouble(salarioField.getText());
+                    if (empresa.adicionarFuncionario(nome, cargo, salario)) {
+                        JOptionPane.showMessageDialog(null, "Funcionário adicionado com sucesso!");
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Não é possível adicionar mais de 10 funcionários.");
+                    }
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(null, "Salário deve ser um número válido.");
+                }
+                nomeFuncionarioField.setText("");
+                cargoField.setText("");
+                salarioField.setText("");
+                atualizarListaFuncionarios();
+            }
+        });
+        panelFuncionarios.add(adicionarFuncionarioButton);
+
+        JButton exibirMediaSalarialButton = new JButton("Exibir Média Salarial");
+        exibirMediaSalarialButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(null, empresa.exibirMediaSalarial());
+            }
+        });
+        panelFuncionarios.add(exibirMediaSalarialButton);
+
+        areaFuncionarios = new JTextArea();
+        areaFuncionarios.setEditable(false);
+        JScrollPane scrollPaneFuncionarios = new JScrollPane(areaFuncionarios);
+        panelFuncionarios.add(scrollPaneFuncionarios);
+
+        // Adicionando Painéis à Janela
+        add(panelClientes);
+        add(panelFuncionarios);
+    }
+
+    private void atualizarListaClientes() {
+        areaClientes.setText(empresa.exibirClientes());
+    }
+
+    private void atualizarListaFuncionarios() {
+        areaFuncionarios.setText(empresa.exibirFuncionarios());
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            SistemaClientes frame = new SistemaClientes();
+            frame.setVisible(true);

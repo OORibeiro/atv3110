@@ -1,0 +1,56 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class SistemaClientes extends JFrame {
+    private Empresa empresa;
+    private JTextField nomeClienteField;
+    private JTextField emailField;
+    private JTextField nomeFuncionarioField;
+    private JTextField cargoField;
+    private JTextField salarioField;
+    private JTextArea areaClientes;
+    private JTextArea areaFuncionarios;
+
+    public SistemaClientes() {
+        empresa = new Empresa();
+
+        setTitle("Sistema de Clientes e Funcionários");
+        setSize(500, 400);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(new GridLayout(3, 1));
+
+        // Painel para Clientes
+        JPanel panelClientes = new JPanel();
+        panelClientes.setLayout(new GridLayout(3, 2));
+        panelClientes.add(new JLabel("Nome Cliente:"));
+        nomeClienteField = new JTextField();
+        panelClientes.add(nomeClienteField);
+
+        panelClientes.add(new JLabel("Email:"));
+        emailField = new JTextField();
+        panelClientes.add(emailField);
+
+        JButton adicionarClienteButton = new JButton("Adicionar Cliente");
+        adicionarClienteButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String nome = nomeClienteField.getText();
+                String email = emailField.getText();
+                if (empresa.adicionarCliente(nome, email)) {
+                    JOptionPane.showMessageDialog(null, "Cliente adicionado com sucesso!");
+                } else {
+                    JOptionPane.showMessageDialog(null, "Não é possível adicionar mais de 5 clientes.");
+                }
+                nomeClienteField.setText("");
+                emailField.setText("");
+                atualizarListaClientes();
+            }
+        });
+        panelClientes.add(adicionarClienteButton);
+
+        areaClientes = new JTextArea();
+        areaClientes.setEditable(false);
+        JScrollPane scrollPaneClientes = new JScrollPane(areaClientes);
+        panelClientes.add(scrollPaneClientes);

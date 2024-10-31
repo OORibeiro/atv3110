@@ -1,0 +1,76 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class SistemaClientes extends JFrame {
+    private Empresa empresa;
+    private JTextField nomeField;
+    private JTextField emailField;
+    private JTextArea areaClientes;
+
+    public SistemaClientes() {
+        empresa = new Empresa();
+
+        setTitle("Sistema de Clientes");
+        setSize(400, 300);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(new BorderLayout());
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(3, 2));
+
+        panel.add(new JLabel("Nome:"));
+        nomeField = new JTextField();
+        panel.add(nomeField);
+
+        panel.add(new JLabel("Email:"));
+        emailField = new JTextField();
+        panel.add(emailField);
+
+        JButton adicionarButton = new JButton("Adicionar Cliente");
+        adicionarButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String nome = nomeField.getText();
+                String email = emailField.getText();
+                if (empresa.adicionarCliente(nome, email)) {
+                    JOptionPane.showMessageDialog(null, "Cliente adicionado com sucesso!");
+                } else {
+                    JOptionPane.showMessageDialog(null, "Não é possível adicionar mais de 5 clientes.");
+                }
+                nomeField.setText("");
+                emailField.setText("");
+                atualizarListaClientes();
+            }
+        });
+        panel.add(adicionarButton);
+
+        JButton exibirButton = new JButton("Exibir Clientes");
+        exibirButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                atualizarListaClientes();
+            }
+        });
+        panel.add(exibirButton);
+
+        areaClientes = new JTextArea();
+        areaClientes.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(areaClientes);
+
+        add(panel, BorderLayout.NORTH);
+        add(scrollPane, BorderLayout.CENTER);
+    }
+
+    private void atualizarListaClientes() {
+        areaClientes.setText(empresa.exibirClientes());
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            SistemaClientes frame = new SistemaClientes();
+            frame.setVisible(true);
+        });
+    }
+}
